@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Evaluator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .role-selection {
+            margin-bottom: 30px;
+        }
+
+        .role-selection h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .role-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .role-btn {
+            padding: 12px 24px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .role-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .role-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .upload-section {
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #f0f2ff;
+            border-color: #764ba2;
+        }
+
+        .upload-area.dragover {
+            background: #e8ebff;
+            border-color: #764ba2;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .loading-bar-container {
+            display: none;
+            margin: 30px 0;
+        }
+
+        .loading-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-header {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .results-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .resume-fields {
+            flex: 1;
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .resume-fields h3 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .field-item {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .field-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .field-item span {
+            color: #666;
+        }
+
+        .score-visualization {
+            flex: 1;
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .score-visualization h3 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .total-score {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .total-score-value {
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .score-chart {
+            margin-top: 20px;
+        }
+
+        .score-bar {
+            margin-bottom: 15px;
+        }
+
+        .score-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .score-bar-fill {
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .score-bar-progress {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .section-breakdown {
+            margin-top: 30px;
+        }
+
+        .section-breakdown h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .breakdown-item-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .breakdown-item-score {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .detailed-analysis {
+            margin-top: 40px;
+        }
+
+        .analysis-section {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .analysis-section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .from-resume {
+            margin-bottom: 20px;
+        }
+
+        .from-resume h4 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .detail-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .ai-suggestions {
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .ai-suggestions h4 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .suggestion-item {
+            padding: 12px;
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .suggestion-points {
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .education-item, .experience-item, .project-item, .cert-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .not-found {
+            color: #dc3545;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Resume Evaluator</h1>
+            <p>ML-Powered Resume Analysis & Scoring System</p>
+        </div>
+
+        <div class="main-content">
+            <div class="role-selection">
+                <h2>Select Role</h2>
+                <div class="role-buttons">
+                    <button class="role-btn" data-role="Data Analyst">Data Analyst</button>
+                    <button class="role-btn" data-role="SDE(Frontend)">SDE(Frontend)</button>
+                    <button class="role-btn" data-role="SDE(Backend)">SDE(Backend)</button>
+                    <button class="role-btn" data-role="SDE(Fullstack)">SDE(Fullstack)</button>
+                </div>
+            </div>
+
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📄</div>
+                    <h3>Upload Your Resume</h3>
+                    <p>Click or drag and drop your resume file here</p>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 10px;">Supported formats: PDF, DOCX, DOC, TXT</p>
+                    <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt">
+                    <div class="file-name" id="fileName"></div>
+                </div>
+            </div>
+
+            <div class="loading-bar-container" id="loadingBar">
+                <h3 style="text-align: center; margin-bottom: 15px;">Scanning your resume...</h3>
+                <div class="loading-bar">
+                    <div class="loading-progress" id="loadingProgress">0%</div>
+                </div>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div class="results-header">
+                    <h2 id="resumeFileName"></h2>
+                    <p style="color: #666; margin-top: 5px;">Total Score: <strong id="totalScoreDisplay"></strong></p>
+                </div>
+
+                <div class="score-display">
+                    <div class="resume-fields">
+                        <h3>Resume Fields</h3>
+                        <div id="resumeFieldsContent"></div>
+                    </div>
+
+                    <div class="score-visualization">
+                        <h3>Score Visualization</h3>
+                        <div class="total-score">
+                            <div class="total-score-value" id="totalScoreValue">0</div>
+                            <div style="color: #666;">out of <span id="maxScoreValue">100</span></div>
+                        </div>
+                        <div class="score-chart" id="scoreChart"></div>
+                    </div>
+                </div>
+
+                <div class="section-breakdown">
+                    <h3>Section-wise Breakdown</h3>
+                    <div id="breakdownContent"></div>
+                </div>
+
+                <div class="detailed-analysis">
+                    <h2 style="margin-bottom: 25px; color: #333;">Detailed Analysis</h2>
+                    <div id="detailedAnalysisContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedRole = 'Data Analyst';
+        let selectedFile = null;
+
+        // Role selection
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedRole = btn.dataset.role;
+            });
+        });
+
+        // Set first role as active
+        document.querySelector('.role-btn').classList.add('active');
+
+        // File upload
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            selectedFile = file;
+            fileName.textContent = `Selected: ${file.name}`;
+            fileName.style.display = 'block';
+            
+            // Auto-upload
+            setTimeout(() => {
+                uploadResume();
+            }, 500);
+        }
+
+        function uploadResume() {
+            if (!selectedFile) {
+                alert('Please select a file first');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('role', selectedRole);
+
+            // Show loading
+            document.getElementById('loadingBar').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+            
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 90) progress = 90;
+                document.getElementById('loadingProgress').style.width = progress + '%';
+                document.getElementById('loadingProgress').textContent = Math.round(progress) + '%';
+            }, 200);
+
+            fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                clearInterval(progressInterval);
+                document.getElementById('loadingProgress').style.width = '100%';
+                document.getElementById('loadingProgress').textContent = '100%';
+                
+                setTimeout(() => {
+                    displayResults(data);
+                }, 500);
+            })
+            .catch(error => {
+                clearInterval(progressInterval);
+                alert('Error: ' + error.message);
+                document.getElementById('loadingBar').style.display = 'none';
+            });
+        }
+
+        function displayResults(data) {
+            document.getElementById('loadingBar').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+
+            // Header
+            document.getElementById('resumeFileName').textContent = data.filename;
+            document.getElementById('totalScoreDisplay').textContent = 
+                `${data.total_score}/${data.max_score} (${data.score_percentage}%)`;
+
+            // Total score
+            document.getElementById('totalScoreValue').textContent = data.total_score;
+            document.getElementById('maxScoreValue').textContent = data.max_score;
+
+            // Resume fields
+            displayResumeFields(data.resume_data);
+
+            // Score chart
+            displayScoreChart(data.scores, data.max_scores);
+
+            // Breakdown
+            displayBreakdown(data.scores, data.max_scores);
+
+            // Detailed analysis
+            displayDetailedAnalysis(data);
+        }
+
+        function displayResumeFields(resumeData) {
+            const container = document.getElementById('resumeFieldsContent');
+            let html = '';
+
+            // Basic Details
+            html += '<div class="field-item">';
+            html += '<strong>Basic Details</strong>';
+            html += `<span>Name: ${resumeData.basic_details.name || 'Not Found'}</span><br>`;
+            html += `<span>Email: ${resumeData.basic_details.email || 'Not Found'}</span><br>`;
+            html += `<span>Phone: ${resumeData.basic_details.phone || 'Not Found'}</span>`;
+            html += '</div>';
+
+            // Summary
+            if (resumeData.professional_summary) {
+                html += '<div class="field-item">';
+                html += '<strong>Professional Summary</strong>';
+                const summaryText = Array.isArray(resumeData.professional_summary) 
+                    ? resumeData.professional_summary.join(' • ') 
+                    : resumeData.professional_summary;
+                html += `<span>${summaryText.substring(0, 100)}...</span>`;
+                html += '</div>';
+            }
+
+            // Education
+            html += '<div class="field-item">';
+            html += `<strong>Education (${resumeData.education.length})</strong>`;
+            html += '</div>';
+
+            // Experience
+            html += '<div class="field-item">';
+            html += `<strong>Experience (${resumeData.experience.length})</strong>`;
+            html += '</div>';
+
+            // Projects
+            html += '<div class="field-item">';
+            html += `<strong>Projects (${resumeData.projects.length})</strong>`;
+            html += '</div>';
+
+            // Skills
+            html += '<div class="field-item">';
+            html += `<strong>Skills (${resumeData.skills.length})</strong>`;
+            html += '</div>';
+
+            container.innerHTML = html;
+        }
+
+        function displayScoreChart(scores, maxScores) {
+            const container = document.getElementById('scoreChart');
+            let html = '';
+
+            const sections = [
+                'order_of_sections', 'basic_details', 'professional_summary',
+                'education', 'experience', 'projects', 'certification', 'skills'
+            ];
+
+            const sectionNames = {
+                'order_of_sections': 'Order of Sections',
+                'basic_details': 'Basic Details',
+                'professional_summary': 'Professional Summary',
+                'education': 'Education',
+                'experience': 'Experience',
+                'projects': 'Projects',
+                'certification': 'Certification',
+                'skills': 'Skills'
+            };
+
+            sections.forEach(section => {
+                const score = scores[section] || 0;
+                const max = maxScores[section] || 1;
+                const percentage = (score / max) * 100;
+                
+                let color = '#28a745'; // green
+                if (percentage < 50) color = '#dc3545'; // red
+                else if (percentage < 75) color = '#ffc107'; // yellow
+
+                html += '<div class="score-bar">';
+                html += '<div class="score-bar-label">';
+                html += `<span>${sectionNames[section]}</span>`;
+                html += `<span>${score.toFixed(2)}/${max}</span>`;
+                html += '</div>';
+                html += '<div class="score-bar-fill">';
+                html += `<div class="score-bar-progress" style="width: ${percentage}%; background: ${color};">`;
+                html += `${percentage.toFixed(0)}%`;
+                html += '</div>';
+                html += '</div>';
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function displayBreakdown(scores, maxScores) {
+            const container = document.getElementById('breakdownContent');
+            let html = '';
+
+            const sections = [
+                'order_of_sections', 'basic_details', 'professional_summary',
+                'education', 'experience', 'projects', 'certification', 'skills'
+            ];
+
+            const sectionNames = {
+                'order_of_sections': 'Order of Sections',
+                'basic_details': 'Basic Details',
+                'professional_summary': 'Professional Summary',
+                'education': 'Education',
+                'experience': 'Experience',
+                'projects': 'Projects',
+                'certification': 'Certification',
+                'skills': 'Skills'
+            };
+
+            sections.forEach(section => {
+                const score = scores[section] || 0;
+                const max = maxScores[section] || 1;
+                
+                html += '<div class="breakdown-item">';
+                html += `<div class="breakdown-item-name">${sectionNames[section]}</div>`;
+                html += `<div class="breakdown-item-score">${score.toFixed(2)}/${max}</div>`;
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function displayDetailedAnalysis(data) {
+            const container = document.getElementById('detailedAnalysisContent');
+            let html = '';
+
+            const resumeData = data.resume_data;
+            const suggestions = data.suggestions || {};
+
+            // Basic Details
+            html += '<div class="analysis-section">';
+            html += '<h3>Basic Details</h3>';
+            html += '<div class="from-resume">';
+            html += '<h4>From Your Resume</h4>';
+            html += '<div class="detail-grid">';
+            html += `<div class="detail-item"><strong>Name</strong>${resumeData.basic_details.name || '<span class="not-found">Not Found</span>'}</div>`;
+            html += `<div class="detail-item"><strong>Email</strong>${resumeData.basic_details.email || '<span class="not-found">Not Found</span>'}</div>`;
+            html += `<div class="detail-item"><strong>Phone</strong>${resumeData.basic_details.phone || '<span class="not-found">Not Found</span>'}</div>`;
+            html += `<div class="detail-item"><strong>GitHub</strong>${resumeData.basic_details.github || '<span class="not-found">Not Found</span>'}</div>`;
+            html += `<div class="detail-item"><strong>LinkedIn</strong>${resumeData.basic_details.linkedin || '<span class="not-found">Not Found</span>'}</div>`;
+            html += '</div>';
+            html += '</div>';
+
+            if (suggestions.basic_details) {
+                html += '<div class="ai-suggestions">';
+                html += '<h4>AI Suggestions</h4>';
+                suggestions.basic_details.forEach(s => {
+                    html += '<div class="suggestion-item">';
+                    html += `<div class="suggestion-points">+${s.points} Points</div>`;
+                    html += `<div>${s.suggestion}</div>`;
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Professional Summary
+            html += '<div class="analysis-section">';
+            html += '<h3>Professional Summary</h3>';
+            html += '<div class="from-resume">';
+            html += '<h4>From Your Resume</h4>';
+            if (resumeData.professional_summary) {
+                if (Array.isArray(resumeData.professional_summary) && resumeData.professional_summary.length > 0) {
+                    html += '<ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0;">';
+                    resumeData.professional_summary.forEach(point => {
+                        html += `<li style="margin-bottom: 8px; color: #333;">${point}</li>`;
+                    });
+                    html += '</ul>';
+                } else if (typeof resumeData.professional_summary === 'string') {
+                    html += `<p>${resumeData.professional_summary}</p>`;
+                } else {
+                    html += '<p class="not-found">Not found</p>';
+                }
+            } else {
+                html += '<p class="not-found">Not found</p>';
+            }
+            html += '</div>';
+
+            if (suggestions.professional_summary) {
+                html += '<div class="ai-suggestions">';
+                html += '<h4>AI Suggestions</h4>';
+                suggestions.professional_summary.forEach(s => {
+                    html += '<div class="suggestion-item">';
+                    html += `<div class="suggestion-points">+${s.points} Point</div>`;
+                    html += `<div>${s.suggestion}</div>`;
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Education
+            html += '<div class="analysis-section">';
+            html += '<h3>Education</h3>';
+            if (resumeData.education.length > 0) {
+                resumeData.education.forEach(edu => {
+                    html += '<div class="education-item">';
+                    html += `<p>${edu}</p>`;
+                    html += '</div>';
+                });
+            } else {
+                html += '<p class="not-found">No education entries found</p>';
+            }
+
+            if (suggestions.education) {
+                html += '<div class="ai-suggestions">';
+                html += '<h4>AI Suggestions</h4>';
+                suggestions.education.forEach(s => {
+                    html += '<div class="suggestion-item">';
+                    html += `<div class="suggestion-points">+${s.points} Point</div>`;
+                    html += `<div>${s.suggestion}</div>`;
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Experience
+            html += '<div class="analysis-section">';
+            html += '<h3>Experience</h3>';
+            if (resumeData.experience.length > 0) {
+                resumeData.experience.forEach(exp => {
+                    html += '<div class="experience-item">';
+                    html += `<p>${exp}</p>`;
+                    html += '</div>';
+                });
+            } else {
+                html += '<p class="not-found">No experience entries found</p>';
+            }
+
+            if (suggestions.experience) {
+                html += '<div class="ai-suggestions">';
+                html += '<h4>AI Suggestions</h4>';
+                suggestions.experience.forEach(s => {
+                    html += '<div class="suggestion-item">';
+                    html += `<div class="suggestion-points">+${s.points} Points</div>`;
+                    html += `<div>${s.suggestion}</div>`;
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Projects
+            html += '<div class="analysis-section">';
+            html += '<h3>Projects</h3>';
+            if (resumeData.projects.length > 0) {
+                resumeData.projects.forEach(proj => {
+                    html += '<div class="project-item">';
+                    html += `<p>${proj}</p>`;
+                    html += '</div>';
+                });
+            } else {
+                html += '<p class="not-found">No projects found</p>';
+            }
+
+            if (suggestions.projects) {
+                html += '<div class="ai-suggestions">';
+                html += '<h4>AI Suggestions</h4>';
+                suggestions.projects.forEach(s => {
+                    html += '<div class="suggestion-item">';
+                    html += `<div class="suggestion-points">+${s.points} Points</div>`;
+                    html += `<div>${s.suggestion}</div>`;
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Certifications
+            html += '<div class="analysis-section">';
+            html += '<h3>Certifications</h3>';
+            if (resumeData.certification.length > 0) {
+                resumeData.certification.forEach(cert => {
+                    html += '<div class="cert-item">';
+                    html += `<p>${cert}</p>`;
+                    html += '</div>';
+                });
+            } else {
+                html += '<p class="not-found">No certifications found</p>';
+            }
+
+            if (suggestions.certification) {
+                html += '<div class="ai-suggestions">';
+                html += '<h4>AI Suggestions</h4>';
+                suggestions.certification.forEach(s => {
+                    html += '<div class="suggestion-item">';
+                    html += `<div class="suggestion-points">+${s.points} Point</div>`;
+                    html += `<div>${s.suggestion}</div>`;
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Skills
+            html += '<div class="analysis-section">';
+            html += '<h3>Skills</h3>';
+            if (resumeData.skills.length > 0) {
+                html += '<div class="skills-container">';
+                resumeData.skills.forEach(skill => {
+                    html += `<span class="skill-tag">${skill}</span>`;
+                });
+                html += '</div>';
+            } else {
+                html += '<p class="not-found">No skills found</p>';
+            }
+
+            if (suggestions.skills) {
+                html += '<div class="ai-suggestions">';
+                html += '<h4>AI Suggestions</h4>';
+                suggestions.skills.forEach(s => {
+                    html += '<div class="suggestion-item">';
+                    html += `<div class="suggestion-points">+${s.points} Points</div>`;
+                    html += `<div>${s.suggestion}</div>`;
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Order of Sections
+            html += '<div class="analysis-section">';
+            html += '<h3>Order of Sections</h3>';
+            html += '<p>The resume sections should follow a standard order for better readability and ATS compatibility.</p>';
+            html += `<p><strong>Score: ${data.scores.order_of_sections}/${data.max_scores.order_of_sections}</strong></p>`;
+            html += '</div>';
+
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
+
