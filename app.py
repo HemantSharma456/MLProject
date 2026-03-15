@@ -68,7 +68,6 @@ def upload_resume():
             os.remove(file_path)
         except:
             pass
-        
         return jsonify({
             'filename': filename,
             'role': role,
@@ -92,5 +91,5 @@ def health():
     return jsonify({'status': 'healthy', 'model_trained': evaluator.is_trained})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=4000)
 

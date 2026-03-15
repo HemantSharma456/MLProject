@@ -266,7 +266,7 @@ class ResumeEvaluator:
             self.classifier = joblib.load(model_path)
             self.vectorizer = joblib.load(vectorizer_path)
             self.is_trained = True
-            print("Model loaded successfully")
+            print("Model loaded successfullyyyy")
             return True
         return False
 

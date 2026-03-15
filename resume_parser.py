@@ -254,7 +254,7 @@ class ResumeParser:
     def extract_skills(self, text):
         skills_text = self.extract_section(text, 'skills')
         if not skills_text:
-            for kw in ['technical skill', 'technical skills', 'competence', 'expertise', 'technologies', 'tools']:
+            for kw in ['technical skill', 'technical skills', 'competence', 'expertise', 'technologies', 'tools', 'skills']:
                 skills_text = self.extract_section(text, kw)
                 if skills_text:
                     break
