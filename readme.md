@@ -38,4 +38,10 @@ It helps users improve their resumes by evaluating structure, skills, keywords, 
 
 ---
 
-## 📂 Project Structure
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/your-username/ai-resume-evaluator.git
+cd ai-resume-evaluator
