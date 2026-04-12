@@ -3,8 +3,12 @@ from flask_cors import CORS
 import os
 import uuid
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 from ml_model import ResumeEvaluator
 from resume_parser import ResumeParser
+from services.job_service import JobService
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -17,6 +21,7 @@ app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
 evaluator = ResumeEvaluator()
 parser = ResumeParser()
+job_service = JobService()
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 if not evaluator.load_model():
@@ -89,6 +94,20 @@ def upload_resume():
 @app.route('/api/health', methods=['GET'])
 def health():
     return jsonify({'status': 'healthy', 'model_trained': evaluator.is_trained})
+
+
+@app.route('/api/recommendations', methods=['GET'])
+def get_recommendations():
+    skills_query = request.args.get('skills', '').strip()
+
+    if not skills_query:
+        return jsonify({'jobs': []})
+
+    try:
+        jobs = job_service.get_recommendations(skills_query, limit=8)
+        return jsonify({'jobs': jobs})
+    except Exception:
+        return jsonify({'jobs': []})
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)

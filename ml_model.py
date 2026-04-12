@@ -269,4 +269,3 @@ class ResumeEvaluator:
             print("Model loaded successfullyyyy of this project")
             return True
         return False
-
