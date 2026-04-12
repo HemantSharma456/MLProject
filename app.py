@@ -101,13 +101,16 @@ def get_recommendations():
     skills_query = request.args.get('skills', '').strip()
 
     if not skills_query:
-        return jsonify({'jobs': []})
+        configured = bool(job_service.app_id and job_service.app_key)
+        return jsonify({'jobs': [], 'adzuna_configured': configured})
 
     try:
         jobs = job_service.get_recommendations(skills_query, limit=8)
-        return jsonify({'jobs': jobs})
+        configured = bool(job_service.app_id and job_service.app_key)
+        return jsonify({'jobs': jobs, 'adzuna_configured': configured})
     except Exception:
-        return jsonify({'jobs': []})
+        configured = bool(job_service.app_id and job_service.app_key)
+        return jsonify({'jobs': [], 'adzuna_configured': configured})
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
