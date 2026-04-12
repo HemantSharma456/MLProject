@@ -7,7 +7,7 @@ An intelligent web application that analyzes resumes and provides actionable fee
 🤖 AI-powered Resume Analysis
 📊 Section-wise Feedback (Skills, Experience, Projects, etc.)
 🎯 ATS Optimization Suggestions
-🏢 Suggested Companies based on Resume (optional API feature)
+🏢 Suggested Companies based on Resume (optional feature)
 ⚡ Clean UI with loading states and result cards
 📥 Download Evaluation Report
 🛠️ Tech Stack
@@ -19,11 +19,11 @@ Backend
 Node.js
 Express.js
 AI / Processing
-OpenAI API / Claude API (for resume evaluation)
-NLP techniques (TF-IDF / keyword extraction)
+OpenAI API / Claude API
+NLP techniques (TF-IDF, keyword extraction)
 Other Tools
 Multer (file uploads)
-PDF Parser / Docx Parser
+PDF / DOCX parser
 📂 Project Structure
 AI-Resume-Evaluator/
 │
@@ -65,22 +65,22 @@ npm run dev
 🔄 How It Works
 User uploads resume
 Backend extracts text from file
-AI model analyzes:
+AI analyzes:
 Skills
 Experience
 Keywords
 Formatting
-System returns structured feedback
-Frontend displays results in card-based UI
+Structured feedback is generated
+Frontend displays results in card format
 📊 Example Output
 ✅ Strong Skills Section
 ⚠️ Missing Keywords for ATS
 ❌ Weak Project Descriptions
 💡 Suggestions for improvement
 🌟 Future Improvements
-🔐 User Authentication (Login/Signup)
+🔐 User Authentication
 📈 Resume Score System
 🧠 Advanced NLP (BERT / embeddings)
-📊 Resume Comparison Feature
+📊 Resume Comparison
 🌍 Multi-language Support
-🏢 Live Job Matching API Integration
+🏢 Live Job Matching API
