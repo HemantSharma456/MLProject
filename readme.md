@@ -20,16 +20,17 @@ It helps users improve their resumes by evaluating structure, skills, keywords, 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- React.js  
-- Tailwind CSS  
-- Axios  
+- Html 
+- CSS  
+- Axios
+- Javascript  
 
 ### Backend
-- Node.js  
-- Express.js  
-
+- Python
+- Flask
+  
 ### AI / Processing
-- OpenAI API / Claude API  
+- Claude API  
 - NLP techniques (TF-IDF, keyword extraction)  
 
 ### Other Tools
