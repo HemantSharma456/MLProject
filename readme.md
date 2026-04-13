@@ -6,7 +6,6 @@
 ![ResumeIQ Banner](https://img.shields.io/badge/ResumeIQ-AI%20Resume%20Evaluator-orange?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-Backend-black?style=flat-square&logo=flask)
-![Claude API](https://img.shields.io/badge/Claude%20API-Anthropic-purple?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 ---
@@ -24,7 +23,7 @@ No more guessing why your resume isn't getting callbacks. ResumeIQ shows you.
 - 📄 **Upload Resume** — Supports PDF and DOCX formats (up to 10 MB)
 - 🎯 **Role-Specific Evaluation** — Choose from Data Analyst, SDE Frontend, SDE Backend, or SDE Fullstack
 - 📊 **Section-wise Scoring** — 8 sections evaluated with a weighted rubric totaling 100 points
-- 🤖 **AI-Powered Suggestions** — Claude AI generates actionable feedback with point-impact indicators (+1, +2, +3)
+- 🤖 **AI-Powered Suggestions** — Adzuna AI generates actionable feedback with point-impact indicators (+1, +2, +3)
 - 🏷️ **ATS Optimization Tips** — Know if your resume will pass Applicant Tracking Systems
 - 👁️ **Resume Overview Dashboard** — Extracted metadata (name, email, skills, experience count) displayed visually
 - 📥 **Download Evaluation Report** — Save your results for offline reference
@@ -59,8 +58,7 @@ No more guessing why your resume isn't getting callbacks. ResumeIQ shows you.
 - Flask (REST API & file handling)
 
 **AI / NLP**
-- [Anthropic Claude API](https://docs.anthropic.com) — structured resume evaluation & suggestion generation
-- NLTK — tokenization and stopword removal
+- Adzuna API
 - scikit-learn — TF-IDF keyword extraction
 
 **Document Parsing**
@@ -74,7 +72,6 @@ No more guessing why your resume isn't getting callbacks. ResumeIQ shows you.
 ### Prerequisites
 
 - Python 3.10+
-- An [Anthropic API key](https://console.anthropic.com)
 
 ### 1. Clone the repository
 
@@ -91,20 +88,6 @@ source venv/bin/activate        # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Set your Anthropic API key
-
-Create a `.env` file in the project root:
-
-```env
-ANTHROPIC_API_KEY=your_api_key_here
-```
-
-Or export it directly:
-
-```bash
-export ANTHROPIC_API_KEY=your_api_key_here
-```
-
 ### 4. Run the application
 
 ```bash
@@ -115,32 +98,7 @@ Open your browser and go to `http://127.0.0.1:5000`
 
 ---
 
-## 📂 Project Structure
 
-```
-MLProject/
-├── app.py                    # Flask application entry point
-├── requirements.txt          # Python dependencies
-├── .env                      # API key (not committed)
-│
-├── src/
-│   ├── parser.py             # PDF and DOCX text extraction
-│   ├── nlp_processor.py      # NLTK tokenization + TF-IDF keyword extraction
-│   ├── evaluator.py          # Claude API integration and prompt construction
-│   └── scorer.py             # Weighted rubric scoring engine
-│
-├── templates/
-│   ├── index.html            # Landing page
-│   └── home.html             # Upload form + results dashboard
-│
-├── static/
-│   ├── css/
-│   │   └── style.css         # Application styles
-│   └── js/
-│       └── main.js           # Axios calls + dynamic dashboard rendering
-│
-└── README.md
-```
 
 ---
 
@@ -184,16 +142,6 @@ Frontend renders dashboard: score, overview, section bars, AI suggestions
 - [ ] Cloud deployment (AWS / Render / Railway)
 
 ---
-
-## 👥 Team
-
-Built as a Capstone Project at **Bennett University, School of Computer Science Engineering and Technology**, Greater Noida — April 2026.
-
-| Name | Role |
-|---|---|
-| Hemant Sharma | Team Lead — Backend, AI Integration |
-| Team Member 2 | Frontend Development & UI/UX |
-| Team Member 3 | NLP Pipeline & Testing |
 
 ---
 
