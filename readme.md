@@ -109,9 +109,9 @@ User uploads resume (PDF/DOCX)
         ↓
 Flask receives file → DocumentParser extracts raw text
         ↓
-NLPProcessor: NLTK tokenization + TF-IDF keyword extraction
+NLPProcessor:  TF-IDF keyword extraction
         ↓
-Claude API: structured prompt → JSON evaluation response
+Adzuna API: structured prompt → JSON evaluation response
         ↓
 ScoringEngine: applies weighted rubric → section scores + overall score
         ↓
@@ -154,5 +154,5 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 ## 🙏 Acknowledgements
 
 - [Bennett University SCSET](https://www.bennett.edu.in) for project support
-- The open-source community behind Flask, PyMuPDF, python-docx, NLTK, and scikit-learn
+- The open-source community behind Flask, PyMuPDF, python-docx, and scikit-learn
 EOF
