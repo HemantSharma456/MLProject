@@ -153,7 +153,6 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 
 ## 🙏 Acknowledgements
 
-- [Anthropic](https://www.anthropic.com) for the Claude API
 - [Bennett University SCSET](https://www.bennett.edu.in) for project support
 - The open-source community behind Flask, PyMuPDF, python-docx, NLTK, and scikit-learn
 EOF
